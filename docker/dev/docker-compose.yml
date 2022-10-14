@@ -1,0 +1,38 @@
+version: "3"
+services:
+    
+    dotnet-dev:
+        container_name: "dotnet-dev"
+        build: .        
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=https://0.0.0.0:5001
+            - ConnectionString=db
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=developer
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/docker/dev/certify/localhost.pfx
+        volumes:
+            - ../..:/app
+        ports:
+            - "2222:22"
+            - "5000:5000"
+            - "5001:5001"
+        networks:
+            - DotNetDemoNetwork
+        depends_on: 
+            - db
+    
+    db:
+        container_name: "db"
+        image: mcr.microsoft.com/azure-sql-edge
+        environment:
+            - MSSQL_SA_PASSWORD=Aa@123456789
+            - ACCEPT_EULA=1
+        ports:
+            - "1433:1433"
+        networks: 
+            - DotNetDemoNetwork
+            
+networks:
+    DotNetDemoNetwork:
+        driver: bridge
+        
